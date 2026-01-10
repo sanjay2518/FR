@@ -33,6 +33,12 @@ const Navbar = () => {
         navigate('/');
     };
 
+    const handleNavClick = (to) => {
+        if (location.pathname === to) {
+            window.location.reload();
+        }
+    };
+
     const navLinks = [
         { to: '/', label: 'Home' },
         { to: '/about', label: 'About' },
@@ -44,7 +50,7 @@ const Navbar = () => {
         <nav className={`navbar ${isScrolled ? 'navbar-scrolled' : ''}`}>
             <div className="navbar-container">
                 {/* Logo */}
-                <Link to="/" className="navbar-logo">
+                <Link to="/" className="navbar-logo" onClick={() => handleNavClick('/')}>
                     <div className="logo-icon">
                         <span className="logo-letters">FR</span>
                     </div>
@@ -58,6 +64,7 @@ const Navbar = () => {
                             key={link.to}
                             to={link.to}
                             className={`navbar-link ${location.pathname === link.to ? 'active' : ''}`}
+                            onClick={() => handleNavClick(link.to)}
                         >
                             {link.label}
                         </Link>
@@ -137,6 +144,7 @@ const Navbar = () => {
                                 key={link.to}
                                 to={link.to}
                                 className={`mobile-link ${location.pathname === link.to ? 'active' : ''}`}
+                                onClick={() => handleNavClick(link.to)}
                             >
                                 {link.label}
                             </Link>

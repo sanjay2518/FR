@@ -1,8 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { UserDataProvider } from './context/UserDataContext';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+
+// Layouts
+import AppLayout from './layouts/AppLayout';
+import DashboardLayout from './layouts/DashboardLayout';
 
 // Pages
 import Home from './pages/Home';
@@ -58,90 +60,72 @@ const PublicRoute = ({ children }) => {
   return children;
 };
 
-// Layout with Navbar and Footer
-const Layout = ({ children, hideFooter = false }) => {
-  return (
-    <>
-      <Navbar />
-      <main>{children}</main>
-      {!hideFooter && <Footer />}
-    </>
-  );
-};
-
 function AppRoutes() {
   return (
     <Routes>
-      {/* Public Pages */}
+      {/* Public Pages with Standard Layout */}
+      <Route path="/" element={<AppLayout />}>
+        <Route index element={<Home />} />
+        <Route path="about" element={<About />} />
+        <Route path="how-it-works" element={<HowItWorks />} />
+        <Route path="contact" element={<Contact />} />
+      </Route>
+
+      {/* Auth Pages - Fullscreen Layout */}
+      <Route path="/" element={<AppLayout hideFooter variant="fullscreen" />}>
+        <Route path="login" element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        } />
+        <Route path="register" element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        } />
+      </Route>
+
+      {/* Dashboard Pages with Sidebar Layout */}
       <Route path="/" element={
-        <Layout>
-          <Home />
-        </Layout>
-      } />
-      <Route path="/about" element={
-        <Layout>
-          <About />
-        </Layout>
-      } />
-      <Route path="/how-it-works" element={
-        <Layout>
-          <HowItWorks />
-        </Layout>
-      } />
-      <Route path="/contact" element={
-        <Layout>
-          <Contact />
-        </Layout>
-      } />
+        <ProtectedRoute>
+          <DashboardLayout sidebarType="user" />
+        </ProtectedRoute>
+      }>
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="profile" element={<Profile />} />
+      </Route>
 
-      {/* Auth Pages */}
-      <Route path="/login" element={
-        <PublicRoute>
-          <Login />
-        </PublicRoute>
-      } />
-      <Route path="/register" element={
-        <PublicRoute>
-          <Register />
-        </PublicRoute>
-      } />
+      {/* Practice Pages with Standard Layout */}
+      <Route path="/" element={
+        <ProtectedRoute>
+          <AppLayout />
+        </ProtectedRoute>
+      }>
+        <Route path="practice" element={<Practice />} />
+      </Route>
 
-      {/* Protected Pages */}
-      <Route path="/dashboard" element={
+      {/* Practice Sessions - Fullscreen Layout */}
+      <Route path="/" element={
         <ProtectedRoute>
-          <Layout hideFooter>
-            <Dashboard />
-          </Layout>
+          <AppLayout hideFooter variant="fullscreen" />
         </ProtectedRoute>
-      } />
-      <Route path="/profile" element={
+      }>
+        <Route path="practice/speaking" element={<SpeakingPractice />} />
+        <Route path="practice/writing" element={<WritingPractice />} />
+      </Route>
+
+      {/* Future Admin Routes - Ready for expansion */}
+      {/* 
+      <Route path="/admin" element={
         <ProtectedRoute>
-          <Layout hideFooter>
-            <Profile />
-          </Layout>
+          <DashboardLayout sidebarType="admin" />
         </ProtectedRoute>
-      } />
-      <Route path="/practice" element={
-        <ProtectedRoute>
-          <Layout>
-            <Practice />
-          </Layout>
-        </ProtectedRoute>
-      } />
-      <Route path="/practice/speaking" element={
-        <ProtectedRoute>
-          <Layout hideFooter>
-            <SpeakingPractice />
-          </Layout>
-        </ProtectedRoute>
-      } />
-      <Route path="/practice/writing" element={
-        <ProtectedRoute>
-          <Layout hideFooter>
-            <WritingPractice />
-          </Layout>
-        </ProtectedRoute>
-      } />
+      }>
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="settings" element={<AdminSettings />} />
+      </Route>
+      */}
 
       {/* Catch-all redirect */}
       <Route path="*" element={<Navigate to="/" replace />} />
