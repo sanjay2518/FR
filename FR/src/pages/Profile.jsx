@@ -313,7 +313,19 @@ const Profile = () => {
                                     <Award size={16} />
                                     Account Type
                                 </label>
-                                <p>Free Account</p>
+                                <div className="subscription-info">
+                                    <p>{user?.subscription?.type?.charAt(0).toUpperCase() + user?.subscription?.type?.slice(1) || 'Free'} Account</p>
+                                    {user?.subscription?.type === 'premium' && (
+                                        <span className="subscription-status active">
+                                            Active until {new Date(user.subscription.expiresAt).toLocaleDateString()}
+                                        </span>
+                                    )}
+                                    {(!user?.subscription || user?.subscription?.type === 'free') && (
+                                        <Link to="/pricing" className="upgrade-link">
+                                            Upgrade to Premium
+                                        </Link>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

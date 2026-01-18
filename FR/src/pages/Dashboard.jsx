@@ -9,8 +9,8 @@ import {
 import './Dashboard.css';
 
 const Dashboard = () => {
-    const { user } = useAuth();
-    const { getStats, getRecentSubmissions, getTimeAgo, loading } = useUserData();
+    const { user, updateSubscription } = useAuth();
+    const { getStats, getRecentSubmissions, getTimeAgo, loading, receiveFeedback } = useUserData();
 
     const stats = getStats();
     const recentSubmissions = getRecentSubmissions(4);
@@ -19,6 +19,36 @@ const Dashboard = () => {
     const progressGoal = 20;
     const progressPercent = Math.min(Math.round((stats.totalSubmissions / progressGoal) * 100), 100);
 
+    // Demo functions for testing new features
+    const simulateFeedback = () => {
+        if (recentSubmissions.length > 0) {
+            const pendingSubmission = recentSubmissions.find(s => s.status === 'pending');
+            if (pendingSubmission) {
+                receiveFeedback(pendingSubmission.id, 85, 'Great work! Your pronunciation is improving.');
+            }
+        }
+    };
+
+    const simulateUpgrade = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/api/subscription/update-subscription', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: user.id,
+                    plan_type: 'premium',
+                    payment_token: 'demo_token_123'
+                })
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                updateSubscription(result.subscription);
+            }
+        } catch (error) {
+            console.error('Upgrade failed:', error);
+        }
+    };
     if (loading) {
         return (
             <div className="dashboard-page">
@@ -42,6 +72,17 @@ const Dashboard = () => {
                         <Link to="/practice" className="btn btn-primary">
                             Start Practice <ArrowRight size={18} />
                         </Link>
+                        {/* Demo buttons - remove in production */}
+                        {process.env.NODE_ENV === 'development' && (
+                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                <button onClick={simulateFeedback} className="btn btn-secondary btn-sm">
+                                    Test Email
+                                </button>
+                                <button onClick={simulateUpgrade} className="btn btn-secondary btn-sm">
+                                    Test Upgrade
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -228,9 +269,18 @@ const Dashboard = () => {
                         <div className="account-card">
                             <div className="account-header">
                                 <Award size={24} />
-                                <span>Free Account</span>
+                                <span>{user?.subscription?.type?.charAt(0).toUpperCase() + user?.subscription?.type?.slice(1) || 'Free'} Account</span>
                             </div>
                             <p>Member since {new Date(user?.id || Date.now()).toLocaleDateString()}</p>
+                            {user?.subscription?.type === 'premium' ? (
+                                <div className="subscription-status">
+                                    <span className="status-active">Active until {new Date(user.subscription.expiresAt).toLocaleDateString()}</span>
+                                </div>
+                            ) : (
+                                <Link to="/pricing" className="btn btn-primary btn-sm">
+                                    Upgrade to Premium
+                                </Link>
+                            )}
                             <Link to="/contact" className="btn btn-secondary btn-sm">
                                 Contact Support
                             </Link>

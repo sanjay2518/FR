@@ -375,6 +375,41 @@
     margin-bottom: 1.5rem;
 }
 
+.recording-options {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.or-divider {
+    color: var(--gray-400);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.upload-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: white;
+    border: 2px solid var(--primary-200);
+    border-radius: var(--radius-xl);
+    color: var(--primary-600);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.upload-btn:hover:not(:disabled) {
+    background: var(--primary-50);
+    border-color: var(--primary-500);
+}
+
+.upload-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 .record-btn {
     width: 80px;
     height: 80px;

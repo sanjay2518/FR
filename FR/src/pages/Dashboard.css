@@ -477,6 +477,15 @@
     margin-bottom: var(--spacing-lg);
 }
 
+.subscription-status {
+    margin-bottom: var(--spacing-md);
+}
+
+.status-active {
+    color: var(--success);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
 /* ============ Comprehensive Device Responsive Design ============ */
 
 /* Mobile Portrait (320px - 480px) */

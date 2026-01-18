@@ -100,6 +100,19 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('frenchmaster_user', JSON.stringify(updatedUser));
     };
 
+    const updateSubscription = (subscriptionData) => {
+        const updatedUser = { 
+            ...user, 
+            subscription: {
+                type: subscriptionData.type || 'free',
+                status: subscriptionData.status || 'active',
+                expiresAt: subscriptionData.expiresAt,
+                features: subscriptionData.features || ['basic_feedback']
+            }
+        };
+        setUser(updatedUser);
+        localStorage.setItem('frenchmaster_user', JSON.stringify(updatedUser));
+    };
     const value = {
         user,
         loading,
@@ -107,7 +120,8 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
-        updateUser
+        updateUser,
+        updateSubscription
     };
 
     return (

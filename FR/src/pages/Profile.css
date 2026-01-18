@@ -1,5 +1,5 @@
 .profile-page {
-    padding-top: 100px;
+    padding-top: 0;
     padding-bottom: 3rem;
     min-height: 100vh;
     background: var(--gray-50);
@@ -8,7 +8,7 @@
 .profile-container {
     max-width: 900px;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 2rem 1.5rem;
 }
 
 /* Header */
@@ -292,6 +292,35 @@
     box-shadow: 0 0 0 3px var(--primary-100);
 }
 
+/* Subscription Info */
+.subscription-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.subscription-status {
+    font-size: 0.875rem;
+    color: var(--success);
+    font-weight: 500;
+}
+
+.subscription-status.active {
+    color: var(--success);
+}
+
+.upgrade-link {
+    color: var(--primary-600);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color var(--transition-fast);
+}
+
+.upgrade-link:hover {
+    color: var(--primary-700);
+    text-decoration: underline;
+}
 /* Responsive */
 @media (max-width: 768px) {
     .profile-card-header {

@@ -19,11 +19,13 @@ const SpeakingPractice = () => {
     const [selectedPrompt, setSelectedPrompt] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [uploadedFile, setUploadedFile] = useState(null);
 
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
     const timerRef = useRef(null);
     const audioRef = useRef(null);
+    const fileInputRef = useRef(null);
 
     const prompts = [
         {
@@ -110,6 +112,42 @@ const SpeakingPractice = () => {
         setRecordedBlob(null);
         setAudioUrl(null);
         setRecordingTime(0);
+        setUploadedFile(null);
+    };
+
+    const handleFileUpload = async (event) => {
+        const file = event.target.files[0];
+        if (file && file.type.startsWith('audio/')) {
+            try {
+                const formData = new FormData();
+                formData.append('audio', file);
+                
+                const response = await fetch('http://localhost:5000/api/uploads/upload-audio', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    setUploadedFile({ ...file, fileId: result.file_id });
+                    const url = URL.createObjectURL(file);
+                    setAudioUrl(url);
+                    setRecordedBlob(file);
+                    
+                    const audio = new Audio(url);
+                    audio.onloadedmetadata = () => {
+                        setRecordingTime(Math.floor(audio.duration));
+                    };
+                } else {
+                    const error = await response.json();
+                    alert(`Upload failed: ${error.error}`);
+                }
+            } catch (error) {
+                alert('Upload failed. Please try again.');
+            }
+        } else {
+            alert('Please select a valid audio file');
+        }
     };
 
     const formatTime = (seconds) => {
@@ -254,13 +292,31 @@ const SpeakingPractice = () => {
                             {/* Controls */}
                             <div className="recorder-controls">
                                 {!recordedBlob ? (
-                                    <button
-                                        className={`record-btn ${isRecording ? 'recording' : ''}`}
-                                        onClick={isRecording ? stopRecording : startRecording}
-                                        disabled={!selectedPrompt}
-                                    >
-                                        {isRecording ? <MicOff size={32} /> : <Mic size={32} />}
-                                    </button>
+                                    <div className="recording-options">
+                                        <button
+                                            className={`record-btn ${isRecording ? 'recording' : ''}`}
+                                            onClick={isRecording ? stopRecording : startRecording}
+                                            disabled={!selectedPrompt}
+                                        >
+                                            {isRecording ? <MicOff size={32} /> : <Mic size={32} />}
+                                        </button>
+                                        <span className="or-divider">OR</span>
+                                        <button
+                                            className="upload-btn"
+                                            onClick={() => fileInputRef.current?.click()}
+                                            disabled={!selectedPrompt}
+                                        >
+                                            <Upload size={24} />
+                                            Upload Audio
+                                        </button>
+                                        <input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            accept="audio/*"
+                                            onChange={handleFileUpload}
+                                            style={{ display: 'none' }}
+                                        />
+                                    </div>
                                 ) : (
                                     <div className="playback-controls">
                                         <button className="control-btn" onClick={playRecording}>
@@ -284,13 +340,13 @@ const SpeakingPractice = () => {
                             {/* Recording Instructions */}
                             <div className="recording-instructions">
                                 {!isRecording && !recordedBlob && (
-                                    <p>Click the microphone to start recording</p>
+                                    <p>Click the microphone to record or upload an audio file</p>
                                 )}
                                 {isRecording && (
                                     <p className="recording-active">Recording in progress... Click to stop</p>
                                 )}
                                 {recordedBlob && (
-                                    <p>Recording complete! Review and submit your practice.</p>
+                                    <p>{uploadedFile ? 'Audio file uploaded!' : 'Recording complete!'} Review and submit your practice.</p>
                                 )}
                             </div>
                         </div>

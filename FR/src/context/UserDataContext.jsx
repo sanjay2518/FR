@@ -59,8 +59,24 @@ export const UserDataProvider = ({ children }) => {
         return newSubmission;
     };
 
+    // Send email notification
+    const sendEmailNotification = async (userEmail, submissionTitle) => {
+        try {
+            const response = await fetch('http://localhost:5000/api/notifications/send-feedback-notification', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail, submission_title: submissionTitle })
+            });
+            return response.ok;
+        } catch (error) {
+            console.error('Failed to send email notification:', error);
+            return false;
+        }
+    };
+
     // Simulate receiving feedback (for demo purposes)
-    const receiveFeedback = (submissionId, score, feedback) => {
+    const receiveFeedback = async (submissionId, score, feedback) => {
+        const submission = submissions.find(sub => sub.id === submissionId);
         const updatedSubmissions = submissions.map(sub =>
             sub.id === submissionId
                 ? { ...sub, status: 'reviewed', score, feedback, reviewedAt: new Date().toISOString() }
@@ -68,6 +84,11 @@ export const UserDataProvider = ({ children }) => {
         );
         setSubmissions(updatedSubmissions);
         saveData(updatedSubmissions);
+        
+        // Send email notification
+        if (user?.email && submission) {
+            await sendEmailNotification(user.email, submission.title);
+        }
     };
 
     // Delete a submission
@@ -119,7 +140,8 @@ export const UserDataProvider = ({ children }) => {
         deleteSubmission,
         getStats,
         getRecentSubmissions,
-        getTimeAgo
+        getTimeAgo,
+        sendEmailNotification
     };
 
     return (
