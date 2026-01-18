@@ -375,6 +375,8 @@
     margin-bottom: 1.5rem;
 }
 
+<<<<<<< HEAD
+=======
 .recording-options {
     display: flex;
     align-items: center;
@@ -410,6 +412,8 @@
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+>>>>>>> 10ce906668222f5b2670b48914bd315842ceb939
 .record-btn {
     width: 80px;
     height: 80px;

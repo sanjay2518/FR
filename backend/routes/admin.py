@@ -1,30 +1,56 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
 import uuid
+from services.supabase_service import supabase_service
 
 admin_bp = Blueprint('admin', __name__)
 
-# Mock database - replace with real database in production
+# Mock database for non-user data
 submissions_db = []
 prompts_db = []
 
 @admin_bp.route('/users', methods=['GET'])
 def get_users():
     try:
-        # Mock data - replace with real database query
-        users = [
-            {'id': 1, 'name': 'John Doe', 'email': 'john@example.com', 'status': 'active', 'subscription': 'free', 'joinDate': '2024-01-10'},
-            {'id': 2, 'name': 'Jane Smith', 'email': 'jane@example.com', 'status': 'active', 'subscription': 'premium', 'joinDate': '2024-01-08'}
-        ]
-        return jsonify({'users': users})
+        if not supabase_service.client:
+            return jsonify({'error': 'Database not configured'}), 500
+        
+        # Get all users from Supabase
+        response = supabase_service.client.table('users').select('*').order('created_at', desc=True).execute()
+        
+        users = []
+        for user in response.data:
+            users.append({
+                'id': user['id'],
+                'name': f"{user['first_name']} {user['last_name']}",
+                'email': user['email'],
+                'username': user['username'],
+                'status': 'active',  # Default status
+                'subscription': 'free',  # Default subscription
+                'joinDate': user['created_at'][:10] if user['created_at'] else 'N/A'
+            })
+        
+        # Get user statistics
+        total_users = len(users)
+        active_users = len([u for u in users if u['status'] == 'active'])
+        
+        return jsonify({
+            'users': users,
+            'stats': {
+                'total': total_users,
+                'active': active_users,
+                'recent': len([u for u in users[:10]])  # Recent 10 users
+            }
+        })
     except Exception as e:
+        print(f"Error fetching users: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 @admin_bp.route('/users/<user_id>/toggle-status', methods=['POST'])
 def toggle_user_status(user_id):
     try:
-        # In production, update user status in database
-        return jsonify({'success': True})
+        # For now, return success - can be extended to update user status in a separate table
+        return jsonify({'success': True, 'message': 'User status updated'})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

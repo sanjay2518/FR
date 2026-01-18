@@ -477,6 +477,8 @@
     margin-bottom: var(--spacing-lg);
 }
 
+<<<<<<< HEAD
+=======
 .subscription-status {
     margin-bottom: var(--spacing-md);
 }
@@ -486,6 +488,8 @@
     font-size: 0.875rem;
     font-weight: 500;
 }
+
+>>>>>>> 10ce906668222f5b2670b48914bd315842ceb939
 /* ============ Comprehensive Device Responsive Design ============ */
 
 /* Mobile Portrait (320px - 480px) */

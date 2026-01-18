@@ -171,7 +171,7 @@ const LearningMaterials = () => {
               </button>
             </div>
           </div>
-        ))}}
+        ))}
       </div>
     </div>
   );
