@@ -19,6 +19,8 @@ import Profile from './pages/Profile';
 import Practice from './pages/Practice';
 import SpeakingPractice from './pages/SpeakingPractice';
 import WritingPractice from './pages/WritingPractice';
+import PracticePrompts from './pages/PracticePrompts';
+import PromptDetail from './pages/PromptDetail';
 
 // Styles
 import './styles/index.css';
@@ -99,6 +101,8 @@ function AppRoutes() {
       }>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="practice-prompts" element={<PracticePrompts />} />
+        <Route path="practice-prompts/:promptId" element={<PromptDetail />} />
       </Route>
 
       {/* Practice Pages with Standard Layout */}

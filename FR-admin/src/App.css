@@ -678,6 +678,14 @@ input:focus, select:focus, textarea:focus {
     min-width: 800px;
   }
   
+  .submissions-table {
+    overflow-x: auto;
+  }
+  
+  .submissions-table table {
+    min-width: 800px;
+  }
+  
   .stat-card {
     text-align: center;
   }

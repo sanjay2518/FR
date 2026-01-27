@@ -44,36 +44,43 @@ const Submissions = () => {
           <thead>
             <tr>
               <th>User</th>
+              <th>Email</th>
               <th>Type</th>
-              <th>Title</th>
+              <th>Prompt</th>
               <th>Date</th>
-              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredSubmissions.map(submission => (
               <tr key={submission.id}>
-                <td>{submission.user}</td>
+                <td>{submission.userName}</td>
+                <td>{submission.userEmail}</td>
                 <td>
                   <span className={`type-badge ${submission.type}`}>
                     {submission.type}
                   </span>
                 </td>
-                <td>{submission.title}</td>
-                <td>{submission.date}</td>
-                <td>
-                  <span className={`status-badge ${submission.status}`}>
-                    {submission.status}
-                  </span>
-                </td>
+                <td>{submission.promptTitle}</td>
+                <td>{new Date(submission.submitted_at).toLocaleDateString()}</td>
                 <td>
                   <div className="actions">
                     <button className="btn-icon" title="View">
                       <Eye size={16} />
                     </button>
                     {submission.type === 'speaking' && (
-                      <button className="btn-icon" title="Play Audio">
+                      <button 
+                        className="btn-icon" 
+                        title="Play Audio"
+                        onClick={() => {
+                          if (submission.audioFile) {
+                            const audio = new Audio(`http://localhost:5000/api/uploads/audio/${submission.audioFile}`);
+                            audio.play().catch(e => console.log('Audio play failed:', e));
+                          } else {
+                            alert('No audio file available');
+                          }
+                        }}
+                      >
                         <Play size={16} />
                       </button>
                     )}

@@ -84,14 +84,36 @@ def reactivate_subscription(subscription_id):
 @admin_bp.route('/submissions', methods=['GET'])
 def get_submissions():
     try:
-        status_filter = request.args.get('status')
-        filtered_submissions = submissions_db
+        if not supabase_service.client:
+            return jsonify({'error': 'Database not configured'}), 500
         
-        if status_filter:
-            filtered_submissions = [s for s in submissions_db if s.get('status') == status_filter]
+        # Get submissions with user and prompt details
+        result = supabase_service.client.table('user_prompt_submissions').select(
+            '*, users(first_name, last_name, email), prompts(title, type)'
+        ).order('submitted_at', desc=True).execute()
         
-        return jsonify({'submissions': filtered_submissions})
+        submissions = []
+        for sub in result.data or []:
+            user_name = f"{sub['users']['first_name']} {sub['users']['last_name']}" if sub.get('users') else 'Unknown User'
+            prompt_title = sub['prompts']['title'] if sub.get('prompts') else 'Unknown Prompt'
+            prompt_type = sub['prompts']['type'] if sub.get('prompts') else 'unknown'
+            
+            submissions.append({
+                'id': sub['id'],
+                'userId': sub['user_id'],
+                'userName': user_name,
+                'userEmail': sub['users']['email'] if sub.get('users') else '',
+                'promptId': sub['prompt_id'],
+                'promptTitle': prompt_title,
+                'type': prompt_type,
+                'audioFile': sub.get('submission_file_path'),
+                'status': sub['status'],
+                'submitted_at': sub['submitted_at']
+            })
+        
+        return jsonify({'submissions': submissions})
     except Exception as e:
+        print(f"Error fetching submissions: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 @admin_bp.route('/submissions/<submission_id>/feedback', methods=['POST'])

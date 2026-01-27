@@ -9,16 +9,6 @@ CREATE TABLE users (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-<<<<<<< HEAD
--- Create password reset tracking table
-CREATE TABLE password_resets (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-  email TEXT NOT NULL,
-  requested_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  reset_at TIMESTAMP WITH TIME ZONE,
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'expired'))
-);
 -- Create password reset tracking table
 CREATE TABLE password_resets (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -29,8 +19,6 @@ CREATE TABLE password_resets (
   status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'expired'))
 );
 
-=======
->>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
 -- Create trigger for updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -44,10 +32,34 @@ CREATE TRIGGER update_users_updated_at
 BEFORE UPDATE ON users 
 FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
+-- Create prompts table
+CREATE TABLE prompts (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  type TEXT NOT NULL CHECK (type IN ('speaking', 'writing')),
+  difficulty TEXT NOT NULL CHECK (difficulty IN ('beginner', 'intermediate', 'advanced')),
+  level TEXT NOT NULL CHECK (level IN ('A1', 'A2', 'B1', 'B2')),
+  due_date DATE,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create user prompt submissions table
+CREATE TABLE user_prompt_submissions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  prompt_id UUID REFERENCES prompts(id) ON DELETE CASCADE,
+  submission_text TEXT,
+  submission_file_path TEXT,
+  submitted_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  score INTEGER,
+  feedback TEXT,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'reviewed'))
+);
+
 -- Disable RLS temporarily for testing
-<<<<<<< HEAD
 ALTER TABLE users DISABLE ROW LEVEL SECURITY;
 ALTER TABLE password_resets DISABLE ROW LEVEL SECURITY;
-=======
-ALTER TABLE users DISABLE ROW LEVEL SECURITY;
->>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
+ALTER TABLE prompts DISABLE ROW LEVEL SECURITY;
+ALTER TABLE user_prompt_submissions DISABLE ROW LEVEL SECURITY;

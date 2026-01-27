@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 from routes.auth_routes import auth_bp
 from routes.notifications import notifications_bp
@@ -6,10 +6,12 @@ from routes.uploads import uploads_bp
 from routes.subscription import subscription_bp
 from routes.materials import materials_bp
 from routes.admin import admin_bp
+from routes.prompts import prompts_bp
+from routes.admin_prompts import admin_prompts_bp
 from services.supabase_service import supabase_service
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=['http://localhost:3001', 'http://localhost:3000', 'http://localhost:5173'])
 
 # Register blueprints
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
@@ -18,6 +20,8 @@ app.register_blueprint(uploads_bp, url_prefix='/api/uploads')
 app.register_blueprint(subscription_bp, url_prefix='/api/subscription')
 app.register_blueprint(materials_bp, url_prefix='/api/materials')
 app.register_blueprint(admin_bp, url_prefix='/api')
+app.register_blueprint(prompts_bp, url_prefix='/api')
+app.register_blueprint(admin_prompts_bp, url_prefix='/api')
 
 @app.route('/')
 def home():

@@ -3,20 +3,43 @@ import { Plus, Trash2 } from 'lucide-react';
 
 const Prompts = () => {
   const [prompts, setPrompts] = useState([]);
-  const [newPrompt, setNewPrompt] = useState({ title: '', description: '', type: 'speaking', difficulty: 'beginner' });
+  const [newPrompt, setNewPrompt] = useState({ 
+    title: '', 
+    description: '', 
+    type: 'speaking', 
+    difficulty: 'beginner',
+    dueDate: '',
+    level: 'A1'
+  });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log('Component mounted, fetching prompts...');
     fetchPrompts();
   }, []);
 
   const fetchPrompts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/prompts');
+      console.log('Fetching prompts from NEW endpoint...');
+      const response = await fetch('http://localhost:5000/api/admin/get-prompts');
+      console.log('NEW endpoint response status:', response.status);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
-      setPrompts(data.prompts || []);
+      console.log('NEW endpoint response data:', data);
+      
+      if (data.success) {
+        setPrompts(data.prompts || []);
+      } else {
+        console.error('API returned error:', data.error);
+        setPrompts([]);
+      }
     } catch (error) {
       console.error('Failed to fetch prompts:', error);
+      setPrompts([]);
     }
   };
 
@@ -25,18 +48,33 @@ const Prompts = () => {
     
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/prompts/add', {
+      console.log('Sending prompt data to NEW endpoint:', newPrompt);
+      const response = await fetch('http://localhost:5000/api/admin/create-prompt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newPrompt)
       });
       
-      if (response.ok) {
+      const result = await response.json();
+      console.log('NEW endpoint response:', result);
+      
+      if (response.ok && result.success) {
+        alert('Prompt added successfully to database!');
         await fetchPrompts();
-        setNewPrompt({ title: '', description: '', type: 'speaking', difficulty: 'beginner' });
+        setNewPrompt({ 
+          title: '', 
+          description: '', 
+          type: 'speaking', 
+          difficulty: 'beginner',
+          dueDate: '',
+          level: 'A1'
+        });
+      } else {
+        alert('Error: ' + (result.error || 'Unknown error'));
       }
     } catch (error) {
       console.error('Failed to add prompt:', error);
+      alert('Failed to add prompt: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -81,6 +119,21 @@ const Prompts = () => {
             <option value="intermediate">Intermediate</option>
             <option value="advanced">Advanced</option>
           </select>
+          <select
+            value={newPrompt.level}
+            onChange={(e) => setNewPrompt({...newPrompt, level: e.target.value})}
+          >
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="B1">B1</option>
+            <option value="B2">B2</option>
+          </select>
+          <input
+            type="date"
+            value={newPrompt.dueDate}
+            onChange={(e) => setNewPrompt({...newPrompt, dueDate: e.target.value})}
+            min={new Date().toISOString().split('T')[0]}
+          />
         </div>
         <textarea
           placeholder="Prompt Description"
@@ -95,39 +148,48 @@ const Prompts = () => {
       </div>
 
       <div className="prompts-list">
-        <h3>Existing Prompts</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Type</th>
-              <th>Difficulty</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {prompts.map(prompt => (
-              <tr key={prompt.id}>
-                <td>{prompt.title}</td>
-                <td>
-                  <span className={`type-badge ${prompt.type}`}>
-                    {prompt.type}
-                  </span>
-                </td>
-                <td>
-                  <span className={`difficulty-badge ${prompt.difficulty}`}>
-                    {prompt.difficulty}
-                  </span>
-                </td>
-                <td>
-                  <button className="btn-icon delete" onClick={() => deletePrompt(prompt.id)}>
-                    <Trash2 size={16} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <h3>Existing Prompts ({prompts.length})</h3>
+        {prompts.length === 0 ? (
+          <p>No prompts found. Add a prompt above to get started.</p>
+        ) : (
+          <div>
+            <p>Found {prompts.length} prompts:</p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Type</th>
+                  <th>Level</th>
+                  <th>Due Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {prompts.map(prompt => (
+                  <tr key={prompt.id}>
+                    <td>{prompt.title || 'No title'}</td>
+                    <td>
+                      <span className={`type-badge ${prompt.type}`}>
+                        {prompt.type || 'Unknown'}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`difficulty-badge ${prompt.difficulty}`}>
+                        {prompt.level || 'N/A'}
+                      </span>
+                    </td>
+                    <td>{prompt.due_date ? new Date(prompt.due_date).toLocaleDateString() : 'No due date'}</td>
+                    <td>
+                      <button className="btn-icon delete" onClick={() => deletePrompt(prompt.id)}>
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

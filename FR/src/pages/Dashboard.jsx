@@ -4,7 +4,7 @@ import { useUserData } from '../context/UserDataContext';
 import {
     Mic, PenTool, Clock, CheckCircle,
     TrendingUp, ArrowRight, Calendar,
-    FileText, Award, Inbox
+    FileText, Award, Inbox, Target
 } from 'lucide-react';
 import './Dashboard.css';
 
@@ -145,6 +145,28 @@ const Dashboard = () => {
                                         <PenTool size={28} />
                                     </div>
                                     <span>Writing Practice</span>
+                                </Link>
+                            </div>
+                        </div>
+
+                        {/* Practice Prompts Card */}
+                        <div className="practice-prompts-card">
+                            <div className="card-header">
+                                <h3>Practice Prompts</h3>
+                                <Link to="/practice-prompts" className="view-all">
+                                    View All <ArrowRight size={16} />
+                                </Link>
+                            </div>
+                            <div className="prompt-preview">
+                                <div className="prompt-icon">
+                                    <Target size={24} />
+                                </div>
+                                <div className="prompt-content">
+                                    <h4>Today's Challenge</h4>
+                                    <p>Complete admin-assigned tasks to improve your French skills</p>
+                                </div>
+                                <Link to="/practice-prompts" className="btn btn-primary btn-sm">
+                                    Start Task
                                 </Link>
                             </div>
                         </div>

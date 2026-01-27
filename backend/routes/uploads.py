@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_from_directory
 import os
 import uuid
 from werkzeug.utils import secure_filename
@@ -46,6 +46,7 @@ def upload_audio():
         
         return jsonify({
             'success': True,
+            'filename': unique_filename,
             'file_id': unique_filename,
             'file_path': file_path,
             'file_size': file_size
@@ -53,3 +54,10 @@ def upload_audio():
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@uploads_bp.route('/audio/<filename>')
+def serve_audio(filename):
+    try:
+        return send_from_directory(UPLOAD_FOLDER, filename)
+    except Exception as e:
+        return jsonify({'error': 'File not found'}), 404
