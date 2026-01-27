@@ -70,6 +70,35 @@ class SupabaseService:
         except:
             return None
     
+    def reset_password(self, email):
+        """Send password reset email using Supabase Auth and log the request"""
+        if not self.client:
+            raise Exception("Supabase not configured")
+        try:
+            # Send reset email via Supabase Auth
+            response = self.client.auth.reset_password_email(email)
+            
+            # Log the password reset request in database
+            try:
+                # Get user ID if exists
+                user_response = self.client.table('users').select('id').eq('email', email).execute()
+                user_id = user_response.data[0]['id'] if user_response.data else None
+                
+                # Insert password reset record
+                self.client.table('password_resets').insert({
+                    'user_id': user_id,
+                    'email': email,
+                    'status': 'pending'
+                }).execute()
+            except Exception as log_error:
+                print(f"Failed to log password reset: {str(log_error)}")
+                # Don't fail the main operation if logging fails
+            
+            return response
+        except Exception as e:
+            print(f"Reset password error: {str(e)}")
+            raise e
+    
     def check_user_exists(self, email):
         """Check if user already exists"""
         if not self.client:

@@ -9,6 +9,25 @@ CREATE TABLE users (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Create password reset tracking table
+CREATE TABLE password_resets (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  email TEXT NOT NULL,
+  requested_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  reset_at TIMESTAMP WITH TIME ZONE,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'expired'))
+);
+-- Create password reset tracking table
+CREATE TABLE password_resets (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  email TEXT NOT NULL,
+  requested_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  reset_at TIMESTAMP WITH TIME ZONE,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'expired'))
+);
+
 -- Create trigger for updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -24,3 +43,4 @@ FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
 -- Disable RLS temporarily for testing
 ALTER TABLE users DISABLE ROW LEVEL SECURITY;
+ALTER TABLE password_resets DISABLE ROW LEVEL SECURITY;

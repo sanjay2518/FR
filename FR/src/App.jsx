@@ -13,6 +13,7 @@ import HowItWorks from './pages/HowItWorks';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Practice from './pages/Practice';
@@ -81,6 +82,11 @@ function AppRoutes() {
         <Route path="register" element={
           <PublicRoute>
             <Register />
+          </PublicRoute>
+        } />
+        <Route path="forgot-password" element={
+          <PublicRoute>
+            <ForgotPassword />
           </PublicRoute>
         } />
       </Route>

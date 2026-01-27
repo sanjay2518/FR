@@ -1,61 +1,40 @@
-/* ============ Dashboard Layout ============ */
 .dashboard-layout {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
     background: var(--gray-50);
 }
 
 .dashboard-content {
-    flex: 1;
-    display: flex;
     padding-top: 80px;
+    min-height: calc(100vh - 80px);
 }
 
 .dashboard-main {
-    flex: 1;
-    padding: var(--spacing-xl);
-    overflow-x: hidden;
+    width: 100%;
+    min-height: calc(100vh - 80px);
+    padding: var(--spacing-lg);
 }
 
-/* ============ Device-Specific Dashboard Layout ============ */
-
-/* Mobile (320px - 768px) */
+/* Mobile */
 @media (max-width: 768px) {
     .dashboard-content {
         padding-top: 70px;
+        min-height: calc(100vh - 70px);
     }
     
     .dashboard-main {
-        padding: var(--spacing-md);
+        min-height: calc(100vh - 70px);
+        margin-left: 0;
     }
 }
 
-/* Tablet (769px - 1024px) */
-@media (min-width: 769px) and (max-width: 1024px) {
-    .dashboard-content {
-        padding-top: 80px;
-    }
-    
-    .dashboard-main {
-        padding: var(--spacing-lg);
-    }
-}
-
-/* Laptop/Desktop (1025px+) */
+/* Desktop */
 @media (min-width: 1025px) {
     .dashboard-content {
-        padding-top: 80px;
+        display: flex;
     }
     
     .dashboard-main {
-        padding: var(--spacing-xl);
-    }
-}
-
-/* Large Desktop (1440px+) */
-@media (min-width: 1440px) {
-    .dashboard-main {
-        padding: var(--spacing-2xl);
+        flex: 1;
+        margin-left: 0;
     }
 }

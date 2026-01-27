@@ -18,6 +18,32 @@ def validate_password(password):
         re.search(r'[0-9]', password)
     )
 
+@auth_bp.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    """Send password reset email"""
+    try:
+        data = request.get_json()
+        
+        if not data or 'email' not in data:
+            return jsonify({'error': 'Email is required'}), 400
+        
+        email = data['email'].strip()
+        
+        if not validate_email(email):
+            return jsonify({'error': 'Invalid email format'}), 400
+        
+        # Use Supabase auth to send reset email
+        response = supabase_service.reset_password(email)
+        
+        return jsonify({
+            'message': 'Password reset email sent successfully',
+            'email': email
+        }), 200
+        
+    except Exception as e:
+        print(f"Forgot password error: {str(e)}")
+        return jsonify({'error': 'Failed to send reset email'}), 500
+
 @auth_bp.route('/register', methods=['POST'])
 def register():
     """User registration endpoint"""
