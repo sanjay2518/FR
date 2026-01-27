@@ -40,11 +40,7 @@ const Dashboard = () => {
                     payment_token: 'demo_token_123'
                 })
             });
-<<<<<<< HEAD
-            
-=======
 
->>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
             if (response.ok) {
                 const result = await response.json();
                 updateSubscription(result.subscription);
@@ -131,84 +127,6 @@ const Dashboard = () => {
                 </div>
 
                 {/* Content Grid */}
-<<<<<<< HEAD
-                <div className="dashboard-content">
-                    {/* Quick Actions */}
-                    <div className="quick-actions-card">
-                        <h3>Quick Actions</h3>
-                        <div className="quick-actions-grid">
-                            <Link to="/practice/speaking" className="quick-action-item">
-                                <div className="action-icon speaking">
-                                    <Mic size={28} />
-                                </div>
-                                <span>Speaking Practice</span>
-                            </Link>
-                            <Link to="/practice/writing" className="quick-action-item">
-                                <div className="action-icon writing">
-                                    <PenTool size={28} />
-                                </div>
-                                <span>Writing Practice</span>
-                            </Link>
-                        </div>
-                    </div>
-
-                    {/* Recent Submissions */}
-                    <div className="recent-submissions-card">
-                        <div className="card-header">
-                            <h3>Recent Submissions</h3>
-                            {recentSubmissions.length > 0 && (
-                                <Link to="/dashboard/submissions" className="view-all">
-                                    View All <ArrowRight size={16} />
-                                </Link>
-                            )}
-                        </div>
-
-                        {recentSubmissions.length === 0 ? (
-                            <div className="empty-state">
-                                <div className="empty-icon">
-                                    <Inbox size={48} />
-                                </div>
-                                <h4>No submissions yet</h4>
-                                <p>Start practicing to see your submissions here!</p>
-                                <Link to="/practice" className="btn btn-primary btn-sm">
-                                    Start Your First Practice
-                                </Link>
-                            </div>
-                        ) : (
-                            <div className="submissions-list">
-                                {recentSubmissions.map((submission) => (
-                                    <div key={submission.id} className="submission-item">
-                                        <div className="submission-icon">
-                                            {submission.type === 'speaking' ? (
-                                                <Mic size={18} />
-                                            ) : (
-                                                <PenTool size={18} />
-                                            )}
-                                        </div>
-                                        <div className="submission-info">
-                                            <h4>{submission.title}</h4>
-                                            <span className="submission-time">
-                                                <Calendar size={14} /> {getTimeAgo(submission.submittedAt)}
-                                            </span>
-                                        </div>
-                                        <div className="submission-status">
-                                            {submission.status === 'reviewed' ? (
-                                                <div className="status-badge reviewed">
-                                                    <CheckCircle size={14} />
-                                                    <span>Score: {submission.score}</span>
-                                                </div>
-                                            ) : (
-                                                <div className="status-badge pending">
-                                                    <Clock size={14} />
-                                                    <span>Pending</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-=======
                 <div className="dashboard-content-grid">
                     {/* Main Content */}
                     <div className="dashboard-main-content">
@@ -288,7 +206,6 @@ const Dashboard = () => {
                                 </div>
                             )}
                         </div>
->>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
                     </div>
 
                     {/* Progress & Info */}

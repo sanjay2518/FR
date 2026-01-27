@@ -1,12 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-<<<<<<< HEAD
-import { 
-    LayoutDashboard, BookOpen, User, Settings, 
-=======
 import {
     LayoutDashboard, BookOpen, User, Settings,
->>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
     Users, FileText, BarChart3, Shield,
     ChevronLeft, Menu
 } from 'lucide-react';
@@ -37,11 +32,7 @@ const Sidebar = ({ type = 'user' }) => {
     return (
         <>
             {/* Mobile Toggle */}
-<<<<<<< HEAD
-            <button 
-=======
             <button
->>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
                 className="sidebar-mobile-toggle"
                 onClick={() => setIsMobileOpen(!isMobileOpen)}
             >
@@ -51,11 +42,7 @@ const Sidebar = ({ type = 'user' }) => {
             {/* Sidebar */}
             <aside className={`sidebar ${isCollapsed ? 'sidebar--collapsed' : ''} ${isMobileOpen ? 'sidebar--mobile-open' : ''}`}>
                 <div className="sidebar-header">
-<<<<<<< HEAD
-                    <button 
-=======
                     <button
->>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
                         className="sidebar-toggle"
                         onClick={() => setIsCollapsed(!isCollapsed)}
                     >
@@ -67,11 +54,7 @@ const Sidebar = ({ type = 'user' }) => {
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = location.pathname === item.to;
-<<<<<<< HEAD
-                        
-=======
 
->>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
                         return (
                             <Link
                                 key={item.to}
@@ -89,11 +72,7 @@ const Sidebar = ({ type = 'user' }) => {
 
             {/* Mobile Overlay */}
             {isMobileOpen && (
-<<<<<<< HEAD
-                <div 
-=======
                 <div
->>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
                     className="sidebar-overlay"
                     onClick={() => setIsMobileOpen(false)}
                 />
