@@ -1,0 +1,154 @@
+import { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
+
+const UserDataContext = createContext(null);
+
+export const useUserData = () => {
+    const context = useContext(UserDataContext);
+    if (!context) {
+        throw new Error('useUserData must be used within a UserDataProvider');
+    }
+    return context;
+};
+
+export const UserDataProvider = ({ children }) => {
+    const { user, isAuthenticated } = useAuth();
+    const [submissions, setSubmissions] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // Load user data from localStorage when user logs in
+    useEffect(() => {
+        if (isAuthenticated && user) {
+            const storedData = localStorage.getItem(`frenchmaster_data_${user.id}`);
+            if (storedData) {
+                const data = JSON.parse(storedData);
+                setSubmissions(data.submissions || []);
+            } else {
+                setSubmissions([]);
+            }
+        } else {
+            setSubmissions([]);
+        }
+        setLoading(false);
+    }, [isAuthenticated, user]);
+
+    // Save data to localStorage whenever it changes
+    const saveData = (newSubmissions) => {
+        if (user) {
+            localStorage.setItem(`frenchmaster_data_${user.id}`, JSON.stringify({
+                submissions: newSubmissions
+            }));
+        }
+    };
+
+    // Add a new submission
+    const addSubmission = (submission) => {
+        const newSubmission = {
+            id: Date.now(),
+            ...submission,
+            status: 'pending',
+            submittedAt: new Date().toISOString(),
+            score: null,
+            feedback: null
+        };
+
+        const updatedSubmissions = [newSubmission, ...submissions];
+        setSubmissions(updatedSubmissions);
+        saveData(updatedSubmissions);
+
+        return newSubmission;
+    };
+
+    // Send email notification
+    const sendEmailNotification = async (userEmail, submissionTitle) => {
+        try {
+            const response = await fetch('http://localhost:5000/api/notifications/send-feedback-notification', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail, submission_title: submissionTitle })
+            });
+            return response.ok;
+        } catch (error) {
+            console.error('Failed to send email notification:', error);
+            return false;
+        }
+    };
+
+    // Simulate receiving feedback (for demo purposes)
+    const receiveFeedback = async (submissionId, score, feedback) => {
+        const submission = submissions.find(sub => sub.id === submissionId);
+        const updatedSubmissions = submissions.map(sub =>
+            sub.id === submissionId
+                ? { ...sub, status: 'reviewed', score, feedback, reviewedAt: new Date().toISOString() }
+                : sub
+        );
+        setSubmissions(updatedSubmissions);
+        saveData(updatedSubmissions);
+        
+        // Send email notification
+        if (user?.email && submission) {
+            await sendEmailNotification(user.email, submission.title);
+        }
+    };
+
+    // Delete a submission
+    const deleteSubmission = (submissionId) => {
+        const updatedSubmissions = submissions.filter(sub => sub.id !== submissionId);
+        setSubmissions(updatedSubmissions);
+        saveData(updatedSubmissions);
+    };
+
+    // Get stats
+    const getStats = () => {
+        const speakingSubmissions = submissions.filter(s => s.type === 'speaking');
+        const writingSubmissions = submissions.filter(s => s.type === 'writing');
+        const pendingFeedback = submissions.filter(s => s.status === 'pending');
+        const completedFeedback = submissions.filter(s => s.status === 'reviewed');
+
+        return {
+            totalSubmissions: submissions.length,
+            speakingSubmissions: speakingSubmissions.length,
+            writingSubmissions: writingSubmissions.length,
+            pendingFeedback: pendingFeedback.length,
+            completedFeedback: completedFeedback.length
+        };
+    };
+
+    // Get recent submissions
+    const getRecentSubmissions = (limit = 5) => {
+        return submissions.slice(0, limit);
+    };
+
+    // Format time ago
+    const getTimeAgo = (dateString) => {
+        const date = new Date(dateString);
+        const now = new Date();
+        const seconds = Math.floor((now - date) / 1000);
+
+        if (seconds < 60) return 'Just now';
+        if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+        if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+        if (seconds < 604800) return `${Math.floor(seconds / 86400)} days ago`;
+        return date.toLocaleDateString();
+    };
+
+    const value = {
+        submissions,
+        loading,
+        addSubmission,
+        receiveFeedback,
+        deleteSubmission,
+        getStats,
+        getRecentSubmissions,
+        getTimeAgo,
+        sendEmailNotification
+    };
+
+    return (
+        <UserDataContext.Provider value={value}>
+            {children}
+        </UserDataContext.Provider>
+    );
+};
+
+export default UserDataContext;
