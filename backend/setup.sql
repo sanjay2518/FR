@@ -9,6 +9,7 @@ CREATE TABLE users (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+<<<<<<< HEAD
 -- Create password reset tracking table
 CREATE TABLE password_resets (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -28,6 +29,8 @@ CREATE TABLE password_resets (
   status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'expired'))
 );
 
+=======
+>>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
 -- Create trigger for updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -42,5 +45,9 @@ BEFORE UPDATE ON users
 FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
 -- Disable RLS temporarily for testing
+<<<<<<< HEAD
 ALTER TABLE users DISABLE ROW LEVEL SECURITY;
 ALTER TABLE password_resets DISABLE ROW LEVEL SECURITY;
+=======
+ALTER TABLE users DISABLE ROW LEVEL SECURITY;
+>>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579

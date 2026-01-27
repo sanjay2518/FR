@@ -17,8 +17,13 @@
 }
 
 .navbar-container {
+<<<<<<< HEAD
     max-width: 1280px;
     margin: 0 auto;
+=======
+    max-width: 100%;
+    margin: 0;
+>>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
     padding: 0 1.5rem;
     display: flex;
     align-items: center;
@@ -292,6 +297,7 @@
     .navbar-container {
         padding: 0 var(--spacing-md);
     }
+<<<<<<< HEAD
     
     .navbar-links {
         display: none;
@@ -313,6 +319,29 @@
         display: none;
     }
     
+=======
+
+    .navbar-links {
+        display: none;
+    }
+
+    .mobile-menu-toggle {
+        display: flex;
+    }
+
+    .navbar-actions .btn {
+        display: none;
+    }
+
+    .user-name {
+        display: none;
+    }
+
+    .logo-text {
+        display: none;
+    }
+
+>>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
     .user-dropdown {
         right: var(--spacing-md);
         min-width: calc(100vw - 2rem);
@@ -325,16 +354,28 @@
     .navbar-links {
         display: none;
     }
+<<<<<<< HEAD
     
     .mobile-menu-toggle {
         display: flex;
     }
     
+=======
+
+    .mobile-menu-toggle {
+        display: flex;
+    }
+
+>>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
     .navbar-actions .btn {
         font-size: 0.875rem;
         padding: 0.625rem 1.25rem;
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
     .user-name {
         font-size: 0.875rem;
     }
@@ -345,6 +386,7 @@
     .navbar-links {
         display: flex;
     }
+<<<<<<< HEAD
     
     .mobile-menu-toggle {
         display: none;
@@ -358,6 +400,21 @@
         display: block;
     }
     
+=======
+
+    .mobile-menu-toggle {
+        display: none;
+    }
+
+    .navbar-actions .btn {
+        display: inline-flex;
+    }
+
+    .user-name {
+        display: block;
+    }
+
+>>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
     .logo-text {
         display: block;
     }
@@ -368,11 +425,19 @@
     .navbar-container {
         padding: 0 2rem;
     }
+<<<<<<< HEAD
     
     .navbar-links {
         gap: 1rem;
     }
     
+=======
+
+    .navbar-links {
+        gap: 1rem;
+    }
+
+>>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
     .navbar-actions {
         gap: 1rem;
     }

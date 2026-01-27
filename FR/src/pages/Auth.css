@@ -332,6 +332,7 @@
     text-decoration: underline;
 }
 
+<<<<<<< HEAD
 /* Success Message */
 .success-message {
     text-align: center;
@@ -363,6 +364,8 @@
     min-width: 160px;
 }
 
+=======
+>>>>>>> 49a431c698c979c4762a9ffe43fdb492e61b3579
 /* Responsive */
 @media (max-width: 1024px) {
     .auth-container {

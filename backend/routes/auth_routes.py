@@ -48,6 +48,9 @@ def forgot_password():
 def register():
     """User registration endpoint"""
     try:
+        # Check if Supabase service is available
+        if not supabase_service:
+            return jsonify({'error': 'Internal server error: Supabase not configured'}), 500
         data = request.get_json()
         print(f"Received data: {data}")
         
@@ -97,6 +100,8 @@ def register():
         
         if 'already registered' in error_msg.lower():
             return jsonify({'error': 'Email already exists'}), 409
+        elif 'supabase not configured' in error_msg.lower():
+            return jsonify({'error': 'Internal server error: Supabase not configured'}), 500
         
         return jsonify({'error': f'Internal server error: {error_msg}'}), 500
 
@@ -104,6 +109,9 @@ def register():
 def login():
     """User login endpoint"""
     try:
+        # Check if Supabase service is available
+        if not supabase_service:
+            return jsonify({'error': 'Internal server error: Supabase not configured'}), 500
         data = request.get_json()
         print(f"Login attempt: {data}")
         
@@ -152,5 +160,7 @@ def login():
             return jsonify({'error': 'Invalid email or password'}), 401
         elif 'email not confirmed' in error_msg.lower():
             return jsonify({'error': 'Please check your email and confirm your account before signing in'}), 400
+        elif 'supabase not configured' in error_msg.lower():
+            return jsonify({'error': 'Internal server error: Supabase not configured'}), 500
         
         return jsonify({'error': f'Login error: {error_msg}'}), 500

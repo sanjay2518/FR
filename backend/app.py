@@ -26,12 +26,14 @@ def home():
 @app.route('/health')
 def health():
     try:
-        if not supabase_service.client:
-            return {'status': 'unhealthy', 'database': 'not configured'}, 503
-        supabase_service.client.table('users').select('count').limit(1).execute()
+        if not supabase_service or not hasattr(supabase_service, 'client') or not supabase_service.client:
+            return {'status': 'unhealthy', 'database': 'not configured', 'error': 'Supabase client not initialized'}, 503
+        
+        # Test connection with a simple query
+        test_response = supabase_service.client.table('users').select('count').limit(1).execute()
         return {'status': 'healthy', 'database': 'connected'}, 200
-    except:
-        return {'status': 'unhealthy', 'database': 'disconnected'}, 503
+    except Exception as e:
+        return {'status': 'unhealthy', 'database': 'disconnected', 'error': str(e)}, 503
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
